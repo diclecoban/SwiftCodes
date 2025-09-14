@@ -29,7 +29,7 @@ func menu() {
         let number1 = Double(readLine()!)!
         print("Please enter your second number for calculation")
         let number2 = Double(readLine()!)!
-        print("Please enter your operand (+, -, *, /, %)")
+        print("Please enter your operand (+, -, *, /)")
         let operand = Character(readLine()!)
         
         calculation(number1: number1, number2: number2, operand: operand)
