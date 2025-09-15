@@ -22,7 +22,6 @@ func operatorForTitle(_ s: String) -> Operator? {
     case "-": return .subtract
     case "*": return .multiply
     case "/": return .divide
-    case "=": return .result
     default:  return nil
     }
 }
@@ -70,20 +69,44 @@ struct KeyButton: View {
 struct ContentView: View {
     @State var engine = CalculatorEngine()
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 0.5), count: 4)
-    @State private var result: String = "0"
+    @State private var result: String = " "
+    @State private var finalResult: Double = 0
     
     private func handlePress(_ pressed: myButton) {
         switch pressed.type {
         case .digit:
-            engine.inputDigit(pressed.title)
-            result = engine.displayText()
+            if engine.isActive() {
+                result.removeAll()
+                result.append(pressed.title)
+            } else {
+                engine.inputDigit(pressed.title)
+                result.append(pressed.title)
+            }
         case .op:
             if pressed.title == "=" {
-                result = engine.displayText()
+                result.removeAll()
+                engine.calculateResult()
+                finalResult = engine.calculateEquals()
+                result.append("\(finalResult)")
+                
             } else if let op = operatorForTitle(pressed.title) {
                 engine.setOperator(op)
+                result.append(pressed.title)
             }
         case .fn:
+            switch pressed.title {
+            case "AC":
+                result.removeAll()
+                engine.clear()
+            case "+/-":
+                if engine.calculateEquals() != 0 {
+                    engine.reSign()
+                    result.removeLast()
+                    result.append(String(engine.calculateEquals()))
+                }
+            default:
+                break
+            }
             // AC, +/- , %, D vs.
             break
         }

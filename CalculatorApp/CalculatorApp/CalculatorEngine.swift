@@ -17,40 +17,54 @@ struct CalculatorEngine {
     var pendingOperator: Operator? = nil
     var currentOperand: Double = 0
     var previousOperand: Double? = nil
+    var isOperatorActive: Bool = false
     
     mutating func inputDigit(_ digit: String) {
         currentOperand = Double(digit) ?? 0
+        if isOperatorActive {
+            isOperatorActive = false
+        }
+    }
+    
+    mutating func isActive() -> Bool {
+        return isOperatorActive
     }
     
     mutating func setOperator(_ op: Operator) {
         pendingOperator = op
         previousOperand = currentOperand
         currentOperand = 0
+        isOperatorActive = false
     }
     
     mutating func calculateEquals() -> Double {
-        return calculateResult()
+        return currentOperand
     }
     
-    mutating func displayText() -> String {
-        return "\(currentOperand)"
+    mutating func reSign(){
+        currentOperand *= -1
     }
     
-    mutating func calculateResult() -> Double {
+    mutating func clear() {
+        currentOperand = 0
+        previousOperand = nil
+        pendingOperator = nil
+        isOperatorActive = false
+    }
+    
+    mutating func calculateResult(){
+        isOperatorActive = true
         switch pendingOperator {
             case .add:
-            return previousOperand! + currentOperand
+            currentOperand = previousOperand! + currentOperand
         case .multiply:
-            return previousOperand! * currentOperand
+            currentOperand =  previousOperand! * currentOperand
         case .subtract:
-            return previousOperand! - currentOperand
+            currentOperand =  previousOperand! - currentOperand
         case .divide:
-            return previousOperand! / currentOperand
-        case .result:
-            fallthrough
+            currentOperand =  previousOperand! / currentOperand
         default:
             break
         }
-        return 0
     }
 }
