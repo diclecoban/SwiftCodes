@@ -31,7 +31,7 @@ let keypad: [[myButton]] = [
     [myButton(title: "7", type: .digit),myButton(title: "8", type: .digit), myButton(title: "9", type: .digit), myButton(title: "*", type: .op)],
     [myButton(title: "4", type: .digit),myButton(title: "5", type: .digit), myButton(title: "6", type: .digit),myButton(title: "-", type: .op)],
     [myButton(title: "1", type: .digit),myButton(title: "2", type: .digit), myButton(title: "3", type: .digit),myButton(title: "+", type: .op)],
-    [myButton(title: "D", type: .fn),myButton(title: "0", type: .digit),myButton(title: ".", type: .digit),myButton(title: "=", type: .op)]
+    [myButton(title: "D", type: .fn),myButton(title: "0", type: .digit),myButton(title: ".", type: .fn),myButton(title: "=", type: .op)]
 ]
 
 struct KeyButton: View {
@@ -104,10 +104,27 @@ struct ContentView: View {
                     result.removeLast()
                     result.append(String(engine.calculateEquals()))
                 }
+            case "%":
+                if engine.calculateEquals() != 0 {
+                    engine.setOperator(.divide)
+                    engine.inputDigit("100")
+                    engine.calculateResult()
+                    finalResult = engine.calculateEquals()
+                    result.removeAll()
+                    result.append("\(finalResult)")
+                }
+            case "D":
+                result.removeLast()
+            case ".":
+                    if !result.contains(".") {
+                        result.append(".")
+                        engine.setOperator(.divide)
+                        engine.inputDigit("10")
+                        engine.setOperator(.multiply)
+                    }
             default:
                 break
             }
-            // AC, +/- , %, D vs.
             break
         }
     }
